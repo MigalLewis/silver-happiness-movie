@@ -63,6 +63,6 @@ public class MovieEntity implements Serializable{
   private String error;
 
   public MovieEntity() {
-    id = (long) (new Date().getTime()/1000); 
+    id = new Date().getTime()/1000; 
   }
 }

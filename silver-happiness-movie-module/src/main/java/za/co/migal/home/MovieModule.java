@@ -11,7 +11,7 @@ import za.co.migal.home.model.Movie;
  * 
  * @author migal
  */
-public interface movieModule {
+public interface MovieModule {
   /**
    * 
    * @return 

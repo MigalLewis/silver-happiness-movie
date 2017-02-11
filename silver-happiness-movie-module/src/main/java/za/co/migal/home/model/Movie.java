@@ -33,5 +33,5 @@ public class Movie {
   private String imdbRating;
   private String imdbVotes;
   private String type;//could be enum
-  private boolean Response;
+  private boolean response;
 }

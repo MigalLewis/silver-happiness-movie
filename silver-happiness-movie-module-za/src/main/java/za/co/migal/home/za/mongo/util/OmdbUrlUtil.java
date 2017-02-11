@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package za.co.migal.home.za.mongo.model;
+package za.co.migal.home.za.mongo.util;
 
 import java.util.Map;
 
@@ -12,6 +12,8 @@ import java.util.Map;
  * @author migal
  */
 public class OmdbUrlUtil {
+  
+  
   /**
    * 
    * @param url
@@ -20,8 +22,9 @@ public class OmdbUrlUtil {
    */
   public static String getOmdbUrl(String url,Map<String,String> params){
     String newUrl=url;
-    for(String paramKey:params.keySet()){
-      newUrl=newUrl.replace(paramKey, params.get(paramKey));
+    for(Map.Entry<String,String> entry : params.entrySet()){
+      String key = entry.getKey();
+      newUrl=newUrl.replace(key, params.get(key));
     }
     return newUrl;
   }

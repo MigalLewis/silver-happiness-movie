@@ -1,10 +1,9 @@
-package za.co.migal.home.beansconfig;
+package za.co.migal.home.beanconfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import za.co.migal.home.za.MovieMapper;
-import za.co.migal.home.za.beanconfig.OmdbapiUrls;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 
@@ -12,13 +11,13 @@ import za.co.migal.home.za.beanconfig.OmdbapiUrls;
  */
 @Configuration
 @ComponentScan(basePackages = "za.co.migal.home")
-public class movieConfiguration {
+public class MovieConfiguration {
   /**
    * 
    * @return 
    */
   @Bean
-  public MovieMapper movieMapper() {
-    return new MovieMapper();
+  public RestTemplate restTemplate() {
+    return new RestTemplate();
   }
 }

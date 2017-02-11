@@ -2,6 +2,7 @@ package za.co.migal.home.za.beanconfig;
 
 import lombok.extern.log4j.Log4j;
 import org.springframework.context.annotation.*;
+import za.co.migal.home.za.MovieMapper;
 
 /**
  *
@@ -12,5 +13,12 @@ import org.springframework.context.annotation.*;
 @Conditional(SouthAfrica.class)
 @Log4j
 public class BeanConfig {
-
+  /**
+   * 
+   * @return 
+   */
+  @Bean
+  public MovieMapper movieMapper() {
+    return new MovieMapper();
+  }
 }
