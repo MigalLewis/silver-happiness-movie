@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,6 +76,23 @@ public class MovieController {
       Movie movie = new Movie();
       movie.setResponse(false);
       return movie;
+    }
+  }
+  /**
+   * 
+   * @param title
+   * @return 
+   */
+  @RequestMapping(method = RequestMethod.GET, value = "/findMovieByTitle/{title}")
+  @ApiOperation(value = "Finds movie using title")
+  @ResponseBody
+  public List<Movie> findMovieByTitle(@PathVariable String title) {
+
+    try {
+      return module.findMovieByTitle(title);
+    } catch (MovieException ex) {
+      Logger.getLogger(MovieController.class.getName()).log(Level.SEVERE, null, ex);
+      return new ArrayList<>();
     }
   }
 

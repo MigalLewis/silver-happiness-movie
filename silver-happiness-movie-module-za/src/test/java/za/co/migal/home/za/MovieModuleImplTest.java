@@ -5,6 +5,8 @@
  */
 package za.co.migal.home.za;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.log4j.Log4j;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,8 +34,12 @@ import za.co.migal.home.za.mongo.repository.MovieRepository;
 public class MovieModuleImplTest {
 
   private MovieEntity movieEntityOwnWorld;
+  private MovieEntity movieEntityOwnWorld2;
+  private List<MovieEntity> movieEntitys_OwnWorld;
   private MovieEntity movieEntityOwnWorldCapitalTrue;
   private Movie movieOwnWorld;
+  private Movie movieOwnWorld2;
+  private List<Movie> movies_OwnWorld;
   private MovieEntity notFoundOnOmdb;
 
   public MovieModuleImplTest() {
@@ -67,6 +73,30 @@ public class MovieModuleImplTest {
     movieEntityOwnWorld.setRated("9");
     movieEntityOwnWorld.setReleased("2017-02-11");
     movieEntityOwnWorld.setResponse("true");
+    movieEntityOwnWorld.setTitle("Own world");
+    
+    movieEntityOwnWorld2 = new MovieEntity();
+    movieEntityOwnWorld2.setActors("Jhonny Depp");
+    movieEntityOwnWorld2.setAwards("TheAwesomiticAward");
+    movieEntityOwnWorld2.setCountry("South Africa");
+    movieEntityOwnWorld2.setDirector("Tim Burton");
+    movieEntityOwnWorld2.setGenre("Adventure");
+    movieEntityOwnWorld2.setId(0);
+    movieEntityOwnWorld2.setImdbID("tt123457");
+    movieEntityOwnWorld2.setImdbRating("9");
+    movieEntityOwnWorld2.setImdbVotes("1");
+    movieEntityOwnWorld2.setLanguage("English");
+    movieEntityOwnWorld2.setMetascore("9");
+    movieEntityOwnWorld2.setPlot("Let your imagination run free again");
+    movieEntityOwnWorld2.setPoster("imagine it");
+    movieEntityOwnWorld2.setRated("9");
+    movieEntityOwnWorld2.setReleased("2017-02-12");
+    movieEntityOwnWorld2.setResponse("true");
+    movieEntityOwnWorld2.setTitle("Own world 2");
+    
+    movieEntitys_OwnWorld=new ArrayList<>();
+    movieEntitys_OwnWorld.add(movieEntityOwnWorld);
+    movieEntitys_OwnWorld.add(movieEntityOwnWorld2);
     
     movieEntityOwnWorldCapitalTrue = new MovieEntity();
     movieEntityOwnWorldCapitalTrue.setActors("Jhonny Depp");
@@ -85,6 +115,7 @@ public class MovieModuleImplTest {
     movieEntityOwnWorldCapitalTrue.setRated("9");
     movieEntityOwnWorldCapitalTrue.setReleased("2017-02-11");
     movieEntityOwnWorldCapitalTrue.setResponse("TRUE");
+    movieEntityOwnWorldCapitalTrue.setTitle("Own world");
     
     movieOwnWorld = new Movie();
     movieOwnWorld.setActors("Jhonny Depp");
@@ -103,10 +134,36 @@ public class MovieModuleImplTest {
     movieOwnWorld.setRated("9");
     movieOwnWorld.setReleased("2017-02-11");
     movieOwnWorld.setResponse(true);
+    movieOwnWorld.setTitle("Own world");
+    
+    movieOwnWorld2 = new Movie();
+    movieOwnWorld2.setActors("Jhonny Depp");
+    movieOwnWorld2.setAwards("TheAwesomiticAward");
+    movieOwnWorld2.setCountry("South Africa");
+    movieOwnWorld2.setDirector("Tim Burton");
+    movieOwnWorld2.setGenre("Adventure");
+    movieOwnWorld2.setId(0);
+    movieOwnWorld2.setImdbID("tt123457");
+    movieOwnWorld2.setImdbRating("9");
+    movieOwnWorld2.setImdbVotes("1");
+    movieOwnWorld2.setLanguage("English");
+    movieOwnWorld2.setMetascore("9");
+    movieOwnWorld2.setPlot("Let your imagination run free again");
+    movieOwnWorld2.setPoster("imagine it");
+    movieOwnWorld2.setRated("9");
+    movieOwnWorld2.setReleased("2017-02-12");
+    movieOwnWorld2.setResponse(true);
+    movieOwnWorld2.setTitle("Own world 2");
+    
+    movies_OwnWorld=new ArrayList<>();
+    movies_OwnWorld.add(movieOwnWorld);
+    movies_OwnWorld.add(movieOwnWorld2);
     
     notFoundOnOmdb=new MovieEntity();
     notFoundOnOmdb.setResponse("false");
     notFoundOnOmdb.setError("Not found");
+    
+    
     
   }
 
@@ -246,6 +303,81 @@ public class MovieModuleImplTest {
     instance.setRestTemplate(restTemplate);
     Movie result = instance.findMovieByImdbId(imdbId);
     Movie expResult = movieOwnWorld;
+    assertEquals(expResult, result);
+  }
+
+  /**
+   * Test of findMovieByTitle method, of class MovieModuleImpl.
+   */
+  @Test
+  public void testFindMovieByTitle() throws Exception {
+    System.out.println("findMovieByTitle");
+    String title = "Own World";
+    MovieRepository movieRepository = Mockito.mock(MovieRepository.class);
+    Mockito.when(movieRepository.findByTitleContainingIgnoreCase(title)).thenReturn(movieEntitys_OwnWorld);
+    MovieModuleImpl instance = new MovieModuleImpl();
+    instance.setMovieMapper(new MovieMapper());
+    instance.setMovieRepository(movieRepository);
+    instance.setOmdbapiUrls(new OmdbapiUrls());
+    instance.setRestTemplate(new RestTemplate());
+    List<Movie> expResult = movies_OwnWorld;
+    List<Movie> result = instance.findMovieByTitle(title);
+    assertEquals(expResult, result);
+  }
+  /**
+   * Test of findMovieByTitle method, of class MovieModuleImpl.
+   */
+  @Test(expected = MovieException.class)
+  public void testFindMovieByTitle_notfound() throws Exception {
+    System.out.println("findMovieByTitle");
+    String title = "Own World";
+    MovieRepository movieRepository = Mockito.mock(MovieRepository.class);
+    Mockito.when(movieRepository.findByTitleContainingIgnoreCase(title)).thenReturn(null);
+    MovieModuleImpl instance = new MovieModuleImpl();
+    instance.setMovieMapper(new MovieMapper());
+    instance.setMovieRepository(movieRepository);
+    instance.setOmdbapiUrls(new OmdbapiUrls());
+    instance.setRestTemplate(new RestTemplate());
+    List<Movie> expResult = movies_OwnWorld;
+    List<Movie> result = instance.findMovieByTitle(title);
+    assertEquals(expResult, result);
+  }
+  /**
+   * Test of findMovieByTitle method, of class MovieModuleImpl.
+   */
+  @Test(expected = MovieException.class)
+  public void testFindMovieByTitle_notfound2() throws Exception {
+    System.out.println("findMovieByTitle");
+    String title = "Own World";
+    MovieRepository movieRepository = Mockito.mock(MovieRepository.class);
+    Mockito.when(movieRepository.findByTitleContainingIgnoreCase(title)).thenReturn(new ArrayList<>());
+    MovieModuleImpl instance = new MovieModuleImpl();
+    instance.setMovieMapper(new MovieMapper());
+    instance.setMovieRepository(movieRepository);
+    instance.setOmdbapiUrls(new OmdbapiUrls());
+    instance.setRestTemplate(new RestTemplate());
+    List<Movie> expResult = movies_OwnWorld;
+    List<Movie> result = instance.findMovieByTitle(title);
+    assertEquals(expResult, result);
+  }
+  /**
+   * Test of findMovieByTitle method, of class MovieModuleImpl.
+   */
+  @Test(expected = MovieException.class)
+  public void testFindMovieByTitle_notfound3() throws Exception {
+    System.out.println("findMovieByTitle");
+    String title = "Own World";
+    List<MovieEntity> movieList=new ArrayList<>();
+    movieList.add(notFoundOnOmdb);
+    MovieRepository movieRepository = Mockito.mock(MovieRepository.class);
+    Mockito.when(movieRepository.findByTitleContainingIgnoreCase(title)).thenReturn(movieList);
+    MovieModuleImpl instance = new MovieModuleImpl();
+    instance.setMovieMapper(new MovieMapper());
+    instance.setMovieRepository(movieRepository);
+    instance.setOmdbapiUrls(new OmdbapiUrls());
+    instance.setRestTemplate(new RestTemplate());
+    List<Movie> expResult = movies_OwnWorld;
+    List<Movie> result = instance.findMovieByTitle(title);
     assertEquals(expResult, result);
   }
 

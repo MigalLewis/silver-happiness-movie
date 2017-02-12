@@ -31,5 +31,5 @@ public interface MovieRepository extends MongoRepository<MovieEntity, String>{
    * @param title
    * @return 
    */
-  public List<MovieEntity> findByTitle(String title);
+  public List<MovieEntity> findByTitleContainingIgnoreCase(String title);
 }

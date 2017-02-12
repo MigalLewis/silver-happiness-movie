@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gherkin.deps.com.google.gson.Gson;
 import java.io.FileReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -49,6 +51,8 @@ public class MovieControllerTest {
   private MovieEntity movieEntityOwnWorld;
   private Movie movieOwnWorld;
   private MovieEntity legoBatman;
+  private MovieEntity batmanVsSuperman;
+  private List<MovieEntity> batmanMovies;
   private MovieEntity notFoundOnOmdb;
   private Movie errorMovie;
   private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
@@ -134,6 +138,33 @@ public class MovieControllerTest {
     legoBatman.setRuntime("104 min");
     legoBatman.setWriter(null);
     legoBatman.setType(null);
+    
+    batmanVsSuperman = new MovieEntity();
+    batmanVsSuperman.setActors("Ben Affleck, Henry Cavill, Amy Adams, Jesse Eisenberg");
+    batmanVsSuperman.setAwards("3 wins & 14 nominations.");
+    batmanVsSuperman.setCountry("USA");
+    batmanVsSuperman.setDirector("Zack Snyder");
+    batmanVsSuperman.setGenre("Action, Adventure, Sci-Fi");
+    batmanVsSuperman.setId(1486803942);
+    batmanVsSuperman.setImdbID("tt2975590");
+    batmanVsSuperman.setImdbRating("6.7");
+    batmanVsSuperman.setImdbVotes("438,291");
+    batmanVsSuperman.setLanguage("English");
+    batmanVsSuperman.setMetascore("44");
+    batmanVsSuperman.setPlot("Fearing that the actions of Superman are left unchecked, Batman takes on the Man of Steel, while the world wrestles with what kind of a hero it really needs.");
+    batmanVsSuperman.setPoster("https://images-na.ssl-images-amazon.com/images/M/MV5BYThjYzcyYzItNTVjNy00NDk0LTgwMWQtYjMwNmNlNWJhMzMyXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg");
+    batmanVsSuperman.setRated("PG-13");
+    batmanVsSuperman.setReleased("25 Mar 2016");
+    batmanVsSuperman.setResponse("true");
+    batmanVsSuperman.setTitle("Batman v Superman: Dawn of Justice");
+    batmanVsSuperman.setYear(0);
+    batmanVsSuperman.setRuntime("151 min");
+    batmanVsSuperman.setWriter(null);
+    batmanVsSuperman.setType(null);
+    
+    batmanMovies=new ArrayList<>();
+    batmanMovies.add(legoBatman);
+    batmanMovies.add(batmanVsSuperman);
 
     notFoundOnOmdb = new MovieEntity();
     notFoundOnOmdb.setResponse("false");
@@ -214,6 +245,20 @@ public class MovieControllerTest {
     this.mvc.perform(get("/findMovieById/1")).andExpect(status().isOk()).
             andExpect(content().contentType(contentType)).
             andExpect(content().json(error));
+  }
+
+  /**
+   * Test of findMovieByTitle method, of class MovieController.
+   */
+  @Test
+  public void testFindMovieByTitle() throws Exception{
+    when(movieRepository.findByTitleContainingIgnoreCase("batman")).thenReturn(batmanMovies);
+    Gson gson = new Gson();
+    Movie[] movie = gson.fromJson(new FileReader(MovieControllerTest.class.getClassLoader().getResource("batman.json").getFile()), Movie[].class);
+    String expected = gson.toJson(movie);
+    this.mvc.perform(get("/findMovieByTitle/batman")).andExpect(status().isOk()).
+            andExpect(content().contentType(contentType)).
+            andExpect(content().json(expected));
   }
 
 }

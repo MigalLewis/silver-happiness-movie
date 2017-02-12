@@ -1,6 +1,8 @@
 package za.co.migal.home.za;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import za.co.migal.home.za.beanconfig.OmdbapiUrls;
 import lombok.extern.log4j.Log4j;
@@ -34,20 +36,18 @@ public class MovieModuleImpl implements MovieModule {
 
   @Override
   public Movie findMovieById(long id) throws MovieException {
-    Movie movie = new Movie();
     MovieEntity movieEntity = movieRepository.findById(id);
-    if (foundMovie(movie, movieEntity)) {
-      return movie;
+    if (foundMovie(movieEntity)) {
+      return movieMapper.mapMovie(movieEntity);
     }
     throw new MovieException("Movie not found with id : " + id);
   }
 
   @Override
   public Movie findMovieByImdbId(String imdbId) throws MovieException {
-    Movie movie = new Movie();
     MovieEntity movieEntity = movieRepository.findByImdbID(imdbId);
-    if (foundMovie(movie, movieEntity)) {
-      return movie;
+    if (foundMovie(movieEntity)) {
+      return movieMapper.mapMovie(movieEntity);
     }
     Map<String, String> params = new HashMap<>();
     params.put("imdb", imdbId);
@@ -55,11 +55,32 @@ public class MovieModuleImpl implements MovieModule {
     log.debug("rest endpoint : " + url);
     movieEntity = restTemplate.getForObject(url, MovieEntity.class);
     log.debug("movieEntity : " + movieEntity);
-    if (foundMovie(movie, movieEntity)) {
+    if (foundMovie(movieEntity)) {
       movieRepository.save(movieEntity);
-      return movie;
+      return movieMapper.mapMovie(movieEntity);
     }
     throw new MovieException("Movie not found with imdbId : " + imdbId);
+  }
+
+  @Override
+  public List<Movie> findMovieByTitle(String title) throws MovieException {
+    List<Movie> movies = new ArrayList<>();
+    List<MovieEntity> movieEntitys = movieRepository.findByTitleContainingIgnoreCase(title);
+    if(null==movieEntitys)
+    {
+      throw new MovieException("Movie not found with title : " + title);
+    }
+    boolean found = false;
+    for (MovieEntity movieEntity : movieEntitys) {
+      if (foundMovie(movieEntity)) {
+        movies.add(movieMapper.mapMovie(movieEntity));
+        found=true;
+      }
+    }
+    if (found) {
+      return movies;
+    }
+    throw new MovieException("Movie not found with title : " + title);
   }
 
   /**
@@ -68,13 +89,8 @@ public class MovieModuleImpl implements MovieModule {
    * @param movieEntity
    * @return
    */
-  private boolean foundMovie(Movie movie, MovieEntity movieEntity) {
-    if (movieEntity != null && "true".equalsIgnoreCase(movieEntity.getResponse())) {
-      movie.setResponse(true);
-      movieMapper.mapMovie(movie, movieEntity);
-      return true;
-    }
-    return false;
+  private boolean foundMovie(MovieEntity movieEntity) {
+    return movieEntity != null && "true".equalsIgnoreCase(movieEntity.getResponse());
   }
 
   @Autowired
@@ -91,6 +107,7 @@ public class MovieModuleImpl implements MovieModule {
   public void setMovieMapper(MovieMapper movieMapper) {
     this.movieMapper = movieMapper;
   }
+
   @Autowired
   public void setRestTemplate(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;

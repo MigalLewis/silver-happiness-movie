@@ -5,6 +5,7 @@
  */
 package za.co.migal.home;
 
+import java.util.List;
 import za.co.migal.home.exceptions.MovieException;
 import za.co.migal.home.model.Movie;
 /**
@@ -31,4 +32,11 @@ public interface MovieModule {
    * @throws MovieException 
    */
   public Movie findMovieByImdbId(String imdbId) throws MovieException;
+  /**
+   * 
+   * @param title
+   * @return
+   * @throws MovieException 
+   */
+  public List<Movie> findMovieByTitle(String title) throws MovieException;
 }
